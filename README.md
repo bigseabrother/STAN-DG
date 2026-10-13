@@ -1,6 +1,8 @@
 # STAN-DG
 
-Code and processed datasets for STAN-DG (Spatio-Temporal Attention Network with Dynamic Graphs), a stock price forecasting model combining technical and fundamental features with industry and geographical relations.
+Implementation of STAN-DG (Spatio-Temporal Attention Network with Dynamic Graphs), a stock price forecasting model combining technical and fundamental features with industry and geographical relations.
+
+Processed datasets are provided separately through this repository's **Releases** page.
 
 Select the model using its internal name: `TimeXer_paper`.
 
@@ -27,9 +29,13 @@ GPU execution requires a compatible PyTorch and CUDA installation.
 | `exp/` | Training and evaluation |
 | `utils/` | Metrics and supporting functions |
 | `scripts/paper/` | Experiment scripts |
-| `data/` | Datasets and relationship tensors |
+| `data/` | Local dataset directory; populate it using the archive downloaded from Releases |
 
 ## Data
+
+Download the dataset archive from this repository's **Releases** page, under **Assets**. The dataset archive is provided separately and is not included in **Code → Download ZIP**.
+
+Extract the archive and place the dataset, relationship, and scaler files in the locations described below. Preserve the original filenames, feature order, and stock order.
 
 Place each dataset's `train.pkl`, `val.pkl`, and `test.pkl` in the corresponding directory:
 
@@ -40,7 +46,7 @@ Place each dataset's `train.pkl`, `val.pkl`, and `test.pkl` in the corresponding
 | CSI 1000 | 513 | `data/dataset_csi1000/` |
 | Full dataset | 1,027 | `data/dataset_financial2geo/` |
 
-The PKL arrays are arranged as **time × stocks × features** and are already separated into training, validation, and test partitions. The default `stock3geo` loader uses 114 daily-frequency features, 14 financial features, 5 marketization features, and 4 temporal features. Preserve the original feature and stock order.
+The PKL arrays are arranged as **time × stocks × features** and are already separated into training, validation, and test partitions. The default `stock3geo` loader uses 114 daily-frequency features, 14 financial features, 5 marketization features, and 4 temporal features.
 
 Place these relationship files directly in `data/`:
 
@@ -58,7 +64,7 @@ mask_region_<suffix>.npy
 | CSI 1000 | `1000` | `1000` |
 | Full dataset | `32` | `4` |
 
-For inverse transformation, use the `scaler.pkl` corresponding to the dataset and closing-price feature.
+For inverse transformation, use the `scaler.pkl` corresponding to the dataset and closing-price feature. Keep each scaler associated with its corresponding dataset.
 
 ## Training and evaluation
 
@@ -73,7 +79,7 @@ bash scripts/paper/csi1800.sh
 
 Run each command separately. A script may contain multiple experiment commands; inspect its contents before execution.
 
-The supplied configurations use a **64-step input window**, **24-step forecast horizon**, batch size **2**, learning rate **3e-5**, and up to **240 training epochs**. Other settings are defined in the scripts and `run.py`.
+The supplied configurations use a **64-step input window**, **24-step forecast horizon**, batch size **2**, and learning rate **3e-5**. Training epochs and other settings are defined in the scripts and `run.py`.
 
 Training and evaluation are handled by `exp/exp_long_term_forecasting.py`. Metrics include **MAE, MSE, MAPE, and RMSE**. The evaluation code controls checkpoint and result locations.
 
@@ -86,5 +92,3 @@ The scripts may also include STAN-DG ablation and sensitivity configurations:
 - `graph_flag`: graph-module ablation.
 - `patch_len`: fundamental-feature patch length.
 - `knn`: Top-K neighborhood size.
-
-
